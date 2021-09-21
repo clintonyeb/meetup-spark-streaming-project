@@ -44,12 +44,10 @@ services:
   collection-service:
     build:
       context: .
-      dockerfile: collection-service.Dockerfile
+      dockerfile: Dockerfile
     volumes:
       - $HOME/.m2:/root/.m2
       - $HOME/secrets:/root/secrets
-#      - ./pom.xml:/pom.xml
-#      - ./collection-service:/app
     container_name: collection-service
     working_dir: /app
     hostname: collection-service
@@ -62,6 +60,35 @@ services:
       NEWS_URL: http://api.datanews.io/v1/headlines
       NEWS_API_KEY: ${NEWS_API_KEY}
       SECRET_FILE: /root/secrets/news-api.secret
+      SERVICE_NAME: collection-service
+      APP_VERSION: 0.0.1
+    restart: on-failure
+    depends_on:
+      - zoo1
+      - kafka1
+    links:
+      - zoo1
+      - kafka1
+
+  sentiment-analysis-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - $HOME/.m2:/root/.m2
+      - $HOME/secrets:/root/secrets
+    container_name: sentiment-analysis-service
+    working_dir: /app
+    hostname: sentiment-analysis-service
+    tty: true
+    environment:
+      KAFKA_LISTENER: LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_TOPIC: news-headlines
+      KAFKA_CLIENT_ID: 1
+      WAIT_HOSTS: zoo1:2181, kafka1:9092
+      SECRET_FILE: /root/secrets/news-api.secret
+      SERVICE_NAME: sentiment-analysis-service
+      APP_VERSION: 0.0.1
     restart: on-failure
     depends_on:
       - zoo1

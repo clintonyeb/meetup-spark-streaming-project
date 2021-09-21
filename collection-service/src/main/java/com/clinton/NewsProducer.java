@@ -9,7 +9,7 @@ public class NewsProducer {
     private static final String MESSAGE_TOPIC_ENV = "KAFKA_TOPIC";
     private static final String KAFKA_SERVER = "KAFKA_LISTENER";
     private static final String KAFKA_CLIENT_ID = "KAFKA_CLIENT_ID";
-    private static KafkaProducer<byte[], byte[]> kafkaProducer;
+    private final KafkaProducer<byte[], byte[]> kafkaProducer;
 
     NewsProducer() {
         Properties producerProperties = new Properties();

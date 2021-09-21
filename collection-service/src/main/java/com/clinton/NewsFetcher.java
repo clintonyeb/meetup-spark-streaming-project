@@ -36,7 +36,7 @@ public class NewsFetcher {
         HttpClient client = new HttpClient();
 
         scheduler.scheduleAtFixedRate(() -> {
-            System.out.println("Fetching new data");
+            System.out.println("Fetching news data");
             try {
                 getNews(client, url);
             } catch (HttpException e) {

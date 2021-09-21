@@ -1,11 +1,11 @@
 package com.clinton;
 
-import io.netty.util.internal.StringUtil;
+import com.google.common.base.Strings;
 
 public abstract class Util {
     public static String getEnv(String key) {
         String value = System.getenv(key);
-        if (StringUtil.isNullOrEmpty(value)) throw new RuntimeException("Environment value was not found");
+        if (Strings.isNullOrEmpty(value)) throw new RuntimeException("Environment value was not found");
         return value;
     }
 }
