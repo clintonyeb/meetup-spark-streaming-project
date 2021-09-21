@@ -5,13 +5,13 @@ import org.apache.kafka.clients.producer.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-public class RSVPProducer {
+public class NewsProducer {
     private static final String MESSAGE_TOPIC_ENV = "KAFKA_TOPIC";
     private static final String KAFKA_SERVER = "KAFKA_LISTENER";
     private static final String KAFKA_CLIENT_ID = "KAFKA_CLIENT_ID";
     private static KafkaProducer<byte[], byte[]> kafkaProducer;
 
-    RSVPProducer() {
+    NewsProducer() {
         Properties producerProperties = new Properties();
         producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Util.getEnv(KAFKA_SERVER));
         producerProperties.put(ProducerConfig.CLIENT_ID_CONFIG, Util.getEnv(KAFKA_CLIENT_ID));
@@ -23,10 +23,11 @@ public class RSVPProducer {
 
 
     void sendMessage(final String messageKey, final byte[] message) {
-
+        System.out.println("Sending message");
         ProducerRecord<byte[], byte[]> producerRecord = new ProducerRecord<>(Util.getEnv(MESSAGE_TOPIC_ENV),
                 messageKey.getBytes(StandardCharsets.UTF_8), message);
         kafkaProducer.send(producerRecord, new TopicCallbackHandler(messageKey));
+        System.out.println("Message sent to kafka");
     }
 
     void close() {
@@ -43,6 +44,7 @@ public class RSVPProducer {
 
         @Override
         public void onCompletion(RecordMetadata metadata, Exception exception) {
+            System.out.println("Message sent complete for: " + eventKey);
             if (null == metadata) {
                 //mark record as failed
                 HybridMessageLogger.moveToFailed(eventKey);

@@ -1,34 +1,17 @@
 package com.clinton;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.*;
-import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URI;
+import java.util.Map;
+import java.util.StringJoiner;
 
 public class Application {
-    private static final String MEET_URL_ENV = "MEETUP_RSVP_WS";
-    private static final String MEET_PORT_ENV = "MEETUP_RSVP_PORT";
+    private static final String NEWS_URL = "NEWS_URL";
+    private static final String NEWS_API_KEY = "NEWS_API_KEY";
 
-    private static final String URL = Util.getEnv(MEET_URL_ENV);
-    private static final int port = Integer.parseInt(Util.getEnv(MEET_PORT_ENV));
-
-    private static boolean continueRunning = true;
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         try {
             HybridMessageLogger.initialize();
         } catch (Exception exception) {
@@ -37,67 +20,41 @@ public class Application {
             System.exit(-1);
         }
 
-        EventLoopGroup group = new NioEventLoopGroup();
 
-        final RSVPProducer rsvpProducer = new RSVPProducer();
+        final NewsProducer newsProducer = new NewsProducer();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 System.out.println("Shutdown started...");
-                group.shutdownGracefully();
-                rsvpProducer.close();
+                newsProducer.close();
                 HybridMessageLogger.close();
-                continueRunning = false;
                 System.out.println("Shutdown finished");
             } catch (final Exception ex) {
                 ex.printStackTrace();
             }
         }));
 
-        URI uri = new URI(URL);
+        Map<String, String> params = Map.of(
+                "country", "us",
+                "language", "en"
+        );
 
-        try {
-            final MeetupWebSocketClientHandler handler =
-                    new MeetupWebSocketClientHandler(
-                            WebSocketClientHandshakerFactory.newHandshaker(
-                                    uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders()), rsvpProducer);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            Bootstrap b = new Bootstrap();
-            b.group(group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) {
-                            ChannelPipeline p = ch.pipeline();
-                            p.addLast(new HttpClientCodec());
-                            p.addLast(new HttpObjectAggregator(8192));
-                            p.addLast(WebSocketClientCompressionHandler.INSTANCE);
-                            p.addLast(handler);
-                        }
-                    });
+        NewsFetcher newsFetcher = new NewsFetcher(from(Util.getEnv(NEWS_URL), Util.getEnv(NEWS_API_KEY), params), objectMapper, newsProducer);
+        newsFetcher.start();
+    }
 
-            Channel ch = b.connect(uri.getHost(), port).sync().channel();
-            handler.handshakeFuture().sync();
+    private static String from(String endpoint, String apiKey, Map<String, String> params) {
+        return String.format("%s?%s&apiKey=%s", endpoint, mapToParam(params), apiKey);
+    }
 
-            BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-
-            do {
-                String msg = console.readLine();
-                if (msg == null) {
-                    continueRunning = false;
-                } else if ("bye".equalsIgnoreCase(msg)) {
-                    ch.writeAndFlush(new CloseWebSocketFrame());
-                    ch.closeFuture().sync();
-                    continueRunning = false;
-                } else if ("ping".equalsIgnoreCase(msg)) {
-                    WebSocketFrame frame = new PingWebSocketFrame(Unpooled.wrappedBuffer(new byte[]{8, 1, 8, 1}));
-                    ch.writeAndFlush(frame);
-                } else {
-                    WebSocketFrame frame = new TextWebSocketFrame(msg);
-                    ch.writeAndFlush(frame);
-                }
-            } while (continueRunning);
-        } finally {
-            group.shutdownGracefully();
+    private static String mapToParam(Map<String, String> param) {
+        StringJoiner join = new StringJoiner("&");
+        for (String key : param.keySet()) {
+            join.add(String.format("%s=%s", key, param.get(key)));
         }
+        return join.toString();
     }
 }
