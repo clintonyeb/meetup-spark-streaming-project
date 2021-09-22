@@ -1,58 +1,44 @@
 package com.clinton;
 
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
+import java.io.Serializable;
 import java.util.Properties;
 
 public class NewsConsumer {
-    private static final String MESSAGE_TOPIC_ENV = "KAFKA_TOPIC";
+    private static final String MESSAGE_TOPIC_ENV = "NEWS_KAFKA_TOPIC";
     private static final String KAFKA_SERVER = "KAFKA_LISTENER";
     private static final String KAFKA_CLIENT_ID = "KAFKA_CLIENT_ID";
+    private static final String KAFKA_GROUP_ID = "KAFKA_GROUP_ID";
 
-    private final KafkaConsumer<byte[], byte[]> kafkaConsumer;
+    private final SentimentAnalyzer sentimentAnalyzer;
+    private final Properties properties;
+    private final SimpleConsumer<byte[], byte[]> consumer;
 
-    public NewsConsumer() {
-        Properties producerProperties = new Properties();
-        producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Util.getEnv(KAFKA_SERVER));
-        producerProperties.put(ProducerConfig.CLIENT_ID_CONFIG, Util.getEnv(KAFKA_CLIENT_ID));
-        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
-        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+    public NewsConsumer(SentimentAnalyzer sentimentAnalyzer) {
+        this.sentimentAnalyzer = sentimentAnalyzer;
 
-        kafkaConsumer = new KafkaConsumer<>(producerProperties);
+        properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, Util.getEnv(KAFKA_SERVER));
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, Util.getEnv(KAFKA_CLIENT_ID));
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, Util.getEnv(KAFKA_GROUP_ID));
+        properties.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, "1024");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+
+        consumer = new SimpleConsumer<>(
+                properties,
+                Util.getEnv(MESSAGE_TOPIC_ENV),
+                sentimentAnalyzer::process
+        );
     }
 
     public void start() {
-        kafkaConsumer.subscribe(Collections.singletonList(Util.getEnv(MESSAGE_TOPIC_ENV)));
-
-        final int giveUp = 100;
-        int noRecordsCount = 0;
-
-        while (true) {
-            final ConsumerRecords<byte[], byte[]> consumerRecords = kafkaConsumer.poll(Duration.of(1000, ChronoUnit.MILLIS));
-
-            if (consumerRecords.count() == 0) {
-                noRecordsCount++;
-                if (noRecordsCount > giveUp) break;
-                else continue;
-            }
-
-            consumerRecords.forEach(record -> {
-                System.out.printf("Consumer Record:(%s, %s, %d, %d)\n",
-                        toString(record.key()), toString(record.value()),
-                        record.partition(), record.offset());
-            });
-
-            kafkaConsumer.commitAsync();
-        }
+        consumer.run();
     }
 
-    private static String toString(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8);
+    public void close() {
+        consumer.close();
     }
 }

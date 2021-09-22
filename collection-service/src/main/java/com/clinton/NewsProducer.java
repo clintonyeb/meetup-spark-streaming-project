@@ -1,62 +1,59 @@
 package com.clinton;
 
+import com.clinton.models.Article;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.*;
 
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 public class NewsProducer {
     private static final String MESSAGE_TOPIC_ENV = "KAFKA_TOPIC";
     private static final String KAFKA_SERVER = "KAFKA_LISTENER";
     private static final String KAFKA_CLIENT_ID = "KAFKA_CLIENT_ID";
-    private final KafkaProducer<byte[], byte[]> kafkaProducer;
+    private static final int delay = 1000;
+    private final Properties properties;
+    private static final String topic = Util.getEnv(MESSAGE_TOPIC_ENV);
+    private final ObjectMapper objectMapper;
+    private final  SimpleProducer<byte[], byte[]> producer;
 
-    NewsProducer() {
-        Properties producerProperties = new Properties();
-        producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Util.getEnv(KAFKA_SERVER));
-        producerProperties.put(ProducerConfig.CLIENT_ID_CONFIG, Util.getEnv(KAFKA_CLIENT_ID));
-        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
-        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+    public NewsProducer(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        properties = new Properties();
+        properties.put("bootstrap.servers", Util.getEnv(KAFKA_SERVER));
+        properties.put("client.id", Util.getEnv(KAFKA_CLIENT_ID));
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        properties.put("acks", "all");
+        properties.put("retries", "3");
 
-        kafkaProducer = new KafkaProducer<>(producerProperties);
+        producer = new SimpleProducer<>(properties);
     }
 
 
-    void sendMessage(final String messageKey, final byte[] message) {
-        System.out.println("Sending message");
-        ProducerRecord<byte[], byte[]> producerRecord = new ProducerRecord<>(Util.getEnv(MESSAGE_TOPIC_ENV),
-                messageKey.getBytes(StandardCharsets.UTF_8), message);
-        kafkaProducer.send(producerRecord, new TopicCallbackHandler(messageKey));
-        System.out.println("Message sent to kafka");
-    }
-
-    void close() {
-        kafkaProducer.close();
-    }
-
-
-    private static final class TopicCallbackHandler implements Callback {
-        final String eventKey;
-
-        TopicCallbackHandler(final String eventKey) {
-            this.eventKey = eventKey;
+    void sendMessage(List<Article> articles) {
+        for (Article article : articles) {
+            send(producer, article);
         }
+//        producer.flush();
+    }
 
-        @Override
-        public void onCompletion(RecordMetadata metadata, Exception exception) {
-            System.out.println("Message sent complete for: " + eventKey);
-            if (null == metadata) {
-                //mark record as failed
-                HybridMessageLogger.moveToFailed(eventKey);
-            } else {
-                //remove the data from the localstate
-                try {
-                    HybridMessageLogger.removeEvent(eventKey);
-                } catch (Exception e) {
-                    //this should be logged...
-                }
-            }
-
+    private void send(SimpleProducer<byte[], byte[]> producer, Article article) {
+        String messageKey = UUID.randomUUID().toString();
+        producer.send(
+                topic,
+                Util.serializeStr(objectMapper, messageKey),
+                Util.serializeObj(objectMapper, article)
+                );
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
+
+    public void close() {
+        producer.close();
     }
 }
