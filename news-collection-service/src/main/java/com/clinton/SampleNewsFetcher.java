@@ -18,11 +18,7 @@ public class SampleNewsFetcher implements APIFetcher<List<Article>> {
     @Override
     public void fetch(Consumer<List<Article>> consumer) {
         try {
-            List<Article> articles = DI.OBJECT_MAPPER.readValue(
-                    Paths.get(fileLocation).toFile(),
-                    new TypeReference<List<Article>>() {
-                    }
-            );
+            List<Article> articles = DI.OBJECT_MAPPER.readValue(Paths.get(fileLocation).toFile(), new TypeReference<List<Article>>() {});
             consumer.accept(articles);
         } catch (IOException e) {
             e.printStackTrace();
