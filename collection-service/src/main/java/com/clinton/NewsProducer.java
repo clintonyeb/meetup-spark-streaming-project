@@ -2,7 +2,7 @@ package com.clinton;
 
 import com.clinton.models.Article;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.clients.producer.ProducerConfig;
 
 import java.util.List;
 import java.util.Properties;
@@ -13,22 +13,20 @@ public class NewsProducer {
     private static final String KAFKA_SERVER = "KAFKA_LISTENER";
     private static final String KAFKA_CLIENT_ID = "KAFKA_CLIENT_ID";
     private static final int delay = 1000;
+    private static final String topic = Utils.getEnv(MESSAGE_TOPIC_ENV);
     private final Properties properties;
-    private static final String topic = Util.getEnv(MESSAGE_TOPIC_ENV);
-    private final ObjectMapper objectMapper;
-    private final  SimpleProducer<byte[], byte[]> producer;
+    private final KafkaProducer<byte[], byte[]> producer;
 
-    public NewsProducer(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public NewsProducer() {
         properties = new Properties();
-        properties.put("bootstrap.servers", Util.getEnv(KAFKA_SERVER));
-        properties.put("client.id", Util.getEnv(KAFKA_CLIENT_ID));
+        properties.put("bootstrap.servers", Utils.getEnv(KAFKA_SERVER));
+        properties.put("client.id", Utils.getEnv(KAFKA_CLIENT_ID));
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
         properties.put("acks", "all");
         properties.put("retries", "3");
 
-        producer = new SimpleProducer<>(properties);
+        producer = new KafkaProducer<>(properties);
     }
 
 
@@ -39,13 +37,13 @@ public class NewsProducer {
 //        producer.flush();
     }
 
-    private void send(SimpleProducer<byte[], byte[]> producer, Article article) {
+    private void send(KafkaProducer<byte[], byte[]> producer, Article article) {
         String messageKey = UUID.randomUUID().toString();
         producer.send(
                 topic,
-                Util.serializeStr(objectMapper, messageKey),
-                Util.serializeObj(objectMapper, article)
-                );
+                Utils.serializeStr(messageKey),
+                Utils.serializeObj(article)
+        );
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {

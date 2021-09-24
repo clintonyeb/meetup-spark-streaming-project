@@ -1,17 +1,22 @@
 package com.clinton;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 public class Application {
+    private static final String DEBUG_MODE = Utils.getEnv("DEBUG_MODE");
+    private static final String SAMPLE_FILE = Utils.getEnv("SAMPLE_FILE");
+
     public static void main(String[] args) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        boolean debug = "true".equals(DEBUG_MODE);
 
         SentimentProducer sentimentProducer = new SentimentProducer();
-        SentimentAnalyzer sentimentAnalyzer = new SentimentAnalyzer(objectMapper, sentimentProducer);
+        Analyzer sentimentAnalyzer;
+
+        if (debug) {
+            sentimentAnalyzer = new SampleSentimentAnalyzer(SAMPLE_FILE, sentimentProducer);
+        } else {
+            sentimentAnalyzer = new SentimentAnalyzer(sentimentProducer);
+        }
+
+
         NewsConsumer newsConsumer = new NewsConsumer(sentimentAnalyzer);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

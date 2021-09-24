@@ -1,22 +1,21 @@
 package com.clinton;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.clinton.models.Article;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Application {
     private static final String NEWS_URL = "NEWS_URL";
     private static final String NEWS_API_KEY = "NEWS_API_KEY";
+    private static final String DEBUG_MODE = Utils.getEnv("DEBUG_MODE");
+    private static final String SAMPLE_FILE = Utils.getEnv("SAMPLE_FILE");
 
     public static void main(String[] args) {
+        boolean debug = "true".equals(DEBUG_MODE);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        final NewsProducer newsProducer = new NewsProducer(objectMapper);
+        final NewsProducer newsProducer = new NewsProducer();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -28,12 +27,19 @@ public class Application {
             }
         }));
 
-        Map<String, String> params = Map.of(
-                "country", "us",
-                "language", "en"
-        );
+        Map<String, String> params = new HashMap<>();
+        params.put("country", "us");
+        params.put("language", "en");
+        params.put("topic", "entertainment");
 
-        NewsFetcher newsFetcher = new NewsFetcher(Util.from(Util.getEnv(NEWS_URL), Util.getEnv(NEWS_API_KEY), params), objectMapper, newsProducer);
-        newsFetcher.start();
+        APIFetcher<List<Article>> apiFetcher;
+
+        if (debug) {
+            apiFetcher = new SampleNewsFetcher(SAMPLE_FILE);
+        } else {
+            apiFetcher = new NewsFetcher(Utils.from(Utils.getEnv(NEWS_URL), Utils.getEnv(NEWS_API_KEY), params));
+        }
+
+        apiFetcher.fetch(newsProducer::sendMessage);
     }
 }

@@ -1,9 +1,15 @@
 package com.clinton.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
-public class ArticleSentiment {
-    private final Article article;
-    private final SentimentResponse sentimentResponse;
+@AllArgsConstructor
+@NoArgsConstructor
+public class ArticleSentiment implements Serializable {
+    private Article article;
+    private SentimentResponse sentimentResponse;
 }
