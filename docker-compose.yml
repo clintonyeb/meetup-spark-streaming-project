@@ -47,14 +47,14 @@ services:
       context: .
       dockerfile: Dockerfile
 
-  collection-service:
+  news-collection-service:
     image: java-maven
     volumes:
       - /home/clinton/.m2:/root/.m2
       - $HOME/secrets:/root/secrets
-    container_name: collection-service
+    container_name: news-collection-service
     working_dir: /app
-    hostname: collection-service
+    hostname: news-collection-service
     tty: true
     environment:
       KAFKA_LISTENER: LISTENER_DOCKER_INTERNAL://kafka1:19092
@@ -63,7 +63,7 @@ services:
       WAIT_HOSTS: zoo1:2181, kafka1:9092
       NEWS_URL: http://api.datanews.io/v1/headlines
       SECRET_FILE: /root/secrets/news-api.secret
-      SERVICE_NAME: collection-service
+      SERVICE_NAME: news-collection-service
       APP_VERSION: 0.0.1
       DEBUG_MODE: "true"
       SAMPLE_FILE: /app/sample-news.json

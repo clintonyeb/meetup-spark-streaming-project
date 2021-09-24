@@ -10,7 +10,7 @@
     <version>0.0.1</version>
 
     <modules>
-        <module>collection-service</module>
+        <module>news-collection-service</module>
         <module>sentiment-analysis-service</module>
         <module>common</module>
         <module>hot-topic-analysis-service</module>

@@ -7,10 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="collection-service" />
         <module name="sentiment-analysis-service" />
         <module name="common" />
         <module name="hot-topic-analysis-service" />
+        <module name="news-collection-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
