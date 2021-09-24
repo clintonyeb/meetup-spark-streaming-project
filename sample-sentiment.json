@@ -1,0 +1,40 @@
+{
+  "type": "negative",
+  "score": -0.24219968185714288,
+  "ratio": -0.6560824356984298,
+  "keywords": [
+    {
+      "word": "grip",
+      "score": 0.192192596
+    },
+    {
+      "word": "day",
+      "score": 0.13424713
+    },
+    {
+      "word": "street",
+      "score": 0.117922934
+    },
+    {
+      "word": "worst",
+      "score": -0.992633864
+    },
+    {
+      "word": "fear",
+      "score": -0.815093905
+    },
+    {
+      "word": "wall",
+      "score": -0.205555683
+    },
+    {
+      "word": "variant",
+      "score": -0.126476981
+    }
+  ],
+  "version": "7.0.8",
+  "author": "twinword inc.",
+  "email": "help@twinword.com",
+  "result_code": "200",
+  "result_msg": "Success"
+}
