@@ -14,7 +14,8 @@ import java.util.StringJoiner;
 public abstract class Utils {
     public static String getEnv(String key) {
         String value = System.getenv(key);
-        if (Strings.isNullOrEmpty(value)) throw new RuntimeException("Environment value was not found with key: " + key);
+        if (Strings.isNullOrEmpty(value))
+            throw new RuntimeException("Environment value was not found with key: " + key);
         return value;
     }
 
@@ -24,7 +25,7 @@ public abstract class Utils {
 
     public static byte[] serializeObj(final Object obj) {
         try {
-            return DI.objecMapper.writeValueAsBytes(obj);
+            return DI.OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

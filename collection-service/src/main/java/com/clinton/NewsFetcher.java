@@ -8,7 +8,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.checkerframework.framework.qual.Unused;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class NewsFetcher implements APIFetcher<List<Article>> {
     private final ScheduledExecutorService scheduler =
@@ -44,7 +42,7 @@ public class NewsFetcher implements APIFetcher<List<Article>> {
 
         // Read the response body.
         byte[] responseBody = method.getResponseBody();
-        NewsResponse newsResponse = DI.objecMapper.readValue(responseBody, NewsResponse.class);
+        NewsResponse newsResponse = DI.OBJECT_MAPPER.readValue(responseBody, NewsResponse.class);
 
         return newsResponse.getHits();
     }

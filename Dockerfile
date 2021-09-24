@@ -10,6 +10,5 @@ RUN chmod +x /start.sh
 COPY . /app/
 
 WORKDIR /app/
-RUN mvn clean package -DskipTests
 
 CMD ["/bin/bash", "/app/start.sh"]

@@ -3,7 +3,6 @@ package com.clinton.models;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -15,7 +14,7 @@ public class Article implements Serializable {
     private String imageUrl;
     private String content;
     private String source;
-    private OffsetDateTime pubDate;
+    private String pubDate;
     private String country;
     private String language;
 

@@ -3,7 +3,7 @@ package com.clinton;
 import com.clinton.models.Article;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,9 +18,10 @@ public class SampleNewsFetcher implements APIFetcher<List<Article>> {
     @Override
     public void fetch(Consumer<List<Article>> consumer) {
         try {
-            List<Article> articles = DI.objecMapper.readValue(
+            List<Article> articles = DI.OBJECT_MAPPER.readValue(
                     Paths.get(fileLocation).toFile(),
-                    new TypeReference<List<Article>>() {}
+                    new TypeReference<List<Article>>() {
+                    }
             );
             consumer.accept(articles);
         } catch (IOException e) {

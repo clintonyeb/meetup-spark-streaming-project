@@ -1,7 +1,6 @@
 package com.clinton.models;
 
 import com.clinton.DI;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +18,8 @@ public class Record implements Serializable {
 
     public static Record parse(ConsumerRecord<byte[], byte[]> record) {
         try {
-            String key = DI.objecMapper.writeValueAsString(record.key());
-            ArticleSentiment articleSentiment = DI.objecMapper.readValue(record.value(), ArticleSentiment.class);
+            String key = DI.OBJECT_MAPPER.writeValueAsString(record.key());
+            ArticleSentiment articleSentiment = DI.OBJECT_MAPPER.readValue(record.value(), ArticleSentiment.class);
             return new Record(key, articleSentiment);
         } catch (IOException e) {
             e.printStackTrace();

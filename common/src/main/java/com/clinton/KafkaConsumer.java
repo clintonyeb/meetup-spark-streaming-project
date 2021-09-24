@@ -40,7 +40,7 @@ public class KafkaConsumer<K extends Serializable, V extends Serializable> imple
             logger.info("C : {}, Started to process records", clientId);
 
             while (!closed.get()) {
-                ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(5000));
 
                 if (records.isEmpty()) {
                     logger.info("C : {}, Found no records", clientId);

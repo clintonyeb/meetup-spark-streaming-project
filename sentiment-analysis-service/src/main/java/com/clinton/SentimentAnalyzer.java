@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SentimentAnalyzer implements Analyzer{
+public class SentimentAnalyzer implements Analyzer {
     private final String SENTIMENT_URL = "SENTIMENT_URL";
     private final String API_HOST = "API_HOST";
     private final String API_KEY = "API_KEY";
@@ -28,7 +28,7 @@ public class SentimentAnalyzer implements Analyzer{
     @Override
     public void process(byte[] key, byte[] article) {
         try {
-            Article parsedArticle = DI.objecMapper.readValue(article, Article.class);
+            Article parsedArticle = DI.OBJECT_MAPPER.readValue(article, Article.class);
 
             Map<String, String> params = new HashMap<>();
             params.put("text", parsedArticle.getDescription());
@@ -47,11 +47,11 @@ public class SentimentAnalyzer implements Analyzer{
 
             // Read the response body.
             byte[] responseBody = method.getResponseBody();
-            SentimentResponse response = DI.objecMapper.readValue(responseBody, SentimentResponse.class);
+            SentimentResponse response = DI.OBJECT_MAPPER.readValue(responseBody, SentimentResponse.class);
 
             ArticleSentiment articleSentiment = new ArticleSentiment(parsedArticle, response);
 
-            sendToKafka(key, DI.objecMapper.writeValueAsBytes(articleSentiment));
+            sendToKafka(key, DI.OBJECT_MAPPER.writeValueAsBytes(articleSentiment));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
