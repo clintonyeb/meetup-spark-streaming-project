@@ -14,7 +14,7 @@ The architecture of the project is shown in the following diagram.
 
 
 
-![news-infrasture.drawio(1)](news-infrasture.png)
+![Project Infrastructure Diagram](news-infrasture.png)
 
 1. News Collection Service
 
