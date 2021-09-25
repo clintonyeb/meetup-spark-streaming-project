@@ -92,7 +92,6 @@ public class FetchNewsService {
         article.setSource(articleSource);
         article.setCountry(articleCountry);
         article.setLanguage(articleLanguage);
-        System.out.println(articleAuthors);
         article.setAuthors(DI.OBJECT_MAPPER.readValue(articleAuthors, new TypeReference<List<String>>() {
         }));
 

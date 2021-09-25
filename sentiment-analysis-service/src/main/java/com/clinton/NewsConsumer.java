@@ -16,7 +16,7 @@ public class NewsConsumer {
 
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, Utils.getEnv(KAFKA_SERVER));
-        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, Utils.getEnv(KAFKA_CLIENT_ID));
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, Utils.getEnv(KAFKA_GROUP_ID));
         properties.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, "1024");

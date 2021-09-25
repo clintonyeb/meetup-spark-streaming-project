@@ -26,7 +26,7 @@ The architecture of the project is shown in the following diagram.
 
 3. Hot Topic Analysis Service
 
-   The Hot Topic Analysis Service is a Spark Stream services that uses a window to compute the most sentimental news in a time window. It stores this information into an HBase database. The streaming services uses HDFS for check-pointing and recovery.
+   The Hot Topic Analysis Service is a Spark Stream services that uses a window to compute the most sentimental news in a time window. It stores this information into an HBase database. The streaming services uses HDFS for check-pointing and recovery. For efficient use of resources, I create a pool of Hbase connection object for each partition.
 
 4. Sentimental News API Service
 
@@ -85,4 +85,6 @@ This means you should have `cmake` and `Docker`, and `Docker Compose` installed.
 2. https://docs.rapidapi.com/
 3. https://datanews.io/docs/headlines
 4. https://www.big-data-europe.eu/
+5. https://spark.apache.org/docs/latest/streaming-programming-guide.html
+6. https://github.com/DanielYWoo/fast-object-pool
 
