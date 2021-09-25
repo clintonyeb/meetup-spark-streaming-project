@@ -4,6 +4,7 @@ import com.clinton.models.Article;
 import com.clinton.models.ArticleSentiment;
 import com.clinton.models.Record;
 import com.clinton.models.SentimentResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -125,7 +126,7 @@ public class Application {
 
     private static class PutFunction implements Function<Record, Put> {
         @Override
-        public Put call(Record record) {
+        public Put call(Record record) throws JsonProcessingException {
             final byte[] columnFamily = Bytes.toBytes(HBASE_COLUMN_FAMILY);
             ArticleSentiment articleSentiment = record.getArticleSentiment();
             Article article = articleSentiment.getArticle();
@@ -142,12 +143,12 @@ public class Application {
             put.addColumn(columnFamily, Bytes.toBytes("article_source"), Bytes.toBytes(article.getSource()));
             put.addColumn(columnFamily, Bytes.toBytes("article_country"), Bytes.toBytes(article.getCountry()));
             put.addColumn(columnFamily, Bytes.toBytes("article_language"), Bytes.toBytes(article.getLanguage()));
-            put.addColumn(columnFamily, Bytes.toBytes("article_authors"), Bytes.toBytes(article.getAuthors().toString()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_authors"), Bytes.toBytes(DI.OBJECT_MAPPER.writeValueAsString(article.getAuthors())));
 
             put.addColumn(columnFamily, Bytes.toBytes("sentiment_ratio"), Bytes.toBytes(sentiment.getRatio()));
             put.addColumn(columnFamily, Bytes.toBytes("sentiment_score"), Bytes.toBytes(sentiment.getScore()));
             put.addColumn(columnFamily, Bytes.toBytes("sentiment_type"), Bytes.toBytes(sentiment.getType()));
-            put.addColumn(columnFamily, Bytes.toBytes("sentiment_keywords"), Bytes.toBytes(sentiment.getKeywords().toString()));
+            put.addColumn(columnFamily, Bytes.toBytes("sentiment_keywords"), Bytes.toBytes(DI.OBJECT_MAPPER.writeValueAsString(sentiment.getKeywords())));
 
             return put;
         }

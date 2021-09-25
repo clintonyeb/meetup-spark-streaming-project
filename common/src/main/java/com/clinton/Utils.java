@@ -19,11 +19,7 @@ public abstract class Utils {
         return value;
     }
 
-    public static byte[] serializeStr(final String str) {
-        return serializeObj(str);
-    }
-
-    public static byte[] serializeObj(final Object obj) {
+    public static byte[] serialize(final Object obj) {
         try {
             return DI.OBJECT_MAPPER.writeValueAsBytes(obj);
         } catch (JsonProcessingException e) {

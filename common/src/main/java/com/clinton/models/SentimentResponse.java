@@ -22,7 +22,7 @@ public class SentimentResponse implements Comparable<SentimentResponse>, Seriali
     }
 
     @Data
-    private static class Keyword implements Serializable {
+    public static class Keyword implements Serializable {
         private double score;
         private String word;
     }

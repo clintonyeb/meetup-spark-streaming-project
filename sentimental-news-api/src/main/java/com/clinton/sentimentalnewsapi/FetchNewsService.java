@@ -1,9 +1,12 @@
 package com.clinton.sentimentalnewsapi;
 
+import com.clinton.DI;
 import com.clinton.models.Article;
 import com.clinton.models.ArticleSentiment;
 import com.clinton.models.Record;
 import com.clinton.models.SentimentResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -40,7 +43,7 @@ public class FetchNewsService {
         return table;
     }
 
-    private Record from(Result result) {
+    private Record from(Result result) throws JsonProcessingException {
         byte[] id = result.getRow();
         byte[] articleTitleByte = result.getValue(columnFamily, Bytes.toBytes("article_title"));
         byte[] articleDescriptionByte = result.getValue(columnFamily, Bytes.toBytes("article_description"));
@@ -90,13 +93,15 @@ public class FetchNewsService {
         article.setCountry(articleCountry);
         article.setLanguage(articleLanguage);
         System.out.println(articleAuthors);
-//        article.setAuthors();
+        article.setAuthors(DI.OBJECT_MAPPER.readValue(articleAuthors, new TypeReference<List<String>>() {
+        }));
 
         SentimentResponse sentimentResponse = new SentimentResponse();
         sentimentResponse.setRatio(sentimentRatio);
         sentimentResponse.setScore(sentimentScore);
         sentimentResponse.setType(sentimentType);
-        System.out.println(sentimentKeywords);
+        sentimentResponse.setKeywords(DI.OBJECT_MAPPER.readValue(sentimentKeywords, new TypeReference<List<SentimentResponse.Keyword>>() {
+        }));
 
         ArticleSentiment articleSentiment = new ArticleSentiment();
         articleSentiment.setArticle(article);

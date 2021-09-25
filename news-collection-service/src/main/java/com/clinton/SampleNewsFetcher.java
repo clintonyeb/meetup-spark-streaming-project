@@ -23,6 +23,5 @@ public class SampleNewsFetcher implements APIFetcher<List<Article>> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

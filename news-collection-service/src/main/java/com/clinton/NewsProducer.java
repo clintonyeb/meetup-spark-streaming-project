@@ -13,11 +13,10 @@ public class NewsProducer {
     private static final String KAFKA_CLIENT_ID = "KAFKA_CLIENT_ID";
     private static final int delay = 1000;
     private static final String topic = Utils.getEnv(MESSAGE_TOPIC_ENV);
-    private final Properties properties;
     private final KafkaProducer<byte[], byte[]> producer;
 
     public NewsProducer() {
-        properties = new Properties();
+        Properties properties = new Properties();
         properties.put("bootstrap.servers", Utils.getEnv(KAFKA_SERVER));
         properties.put("client.id", Utils.getEnv(KAFKA_CLIENT_ID));
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
@@ -33,15 +32,14 @@ public class NewsProducer {
         for (Article article : articles) {
             send(producer, article);
         }
-//        producer.flush();
     }
 
     private void send(KafkaProducer<byte[], byte[]> producer, Article article) {
         String messageKey = UUID.randomUUID().toString();
         producer.send(
                 topic,
-                Utils.serializeStr(messageKey),
-                Utils.serializeObj(article)
+                Utils.serialize(messageKey),
+                Utils.serialize(article)
         );
         try {
             Thread.sleep(delay);
