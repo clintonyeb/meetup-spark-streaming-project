@@ -221,6 +221,7 @@ services:
   hbase:
     image: bde2020/hbase-standalone:1.0.0-hbase1.2.6
     container_name: hbase
+    hostname: app.hbase
     restart: always
     volumes:
       - hbase_data:/hbase-data
@@ -237,6 +238,29 @@ services:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
     env_file:
       - ./hbase-standalone.env
+
+  sentimental-news-api:
+    image: java-maven
+    volumes:
+      - /home/clinton/.m2:/root/.m2
+      - $HOME/secrets:/root/secrets
+    container_name: sentimental-news-api
+    working_dir: /app
+    hostname: app.news-api
+    tty: true
+    ports:
+      - "8085:8085"
+    environment:
+      WAIT_HOSTS: hbase:2182
+      SECRET_FILE: /root/secrets/sentiment-api.secret
+      SERVICE_NAME: sentimental-news-api
+      APP_VERSION: 0.0.1
+      DEBUG_MODE: "true"
+    restart: on-failure
+    depends_on:
+      - hbase
+    links:
+      - hbase
 
 volumes:
   hadoop_namenode:

@@ -137,10 +137,17 @@ public class Application {
             put.addColumn(columnFamily, Bytes.toBytes("article_description"), Bytes.toBytes(article.getDescription()));
             put.addColumn(columnFamily, Bytes.toBytes("article_content"), Bytes.toBytes(article.getContent()));
             put.addColumn(columnFamily, Bytes.toBytes("article_pub_date"), Bytes.toBytes(article.getPubDate()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_url"), Bytes.toBytes(article.getUrl()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_image_url"), Bytes.toBytes(article.getImageUrl()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_source"), Bytes.toBytes(article.getSource()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_country"), Bytes.toBytes(article.getCountry()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_language"), Bytes.toBytes(article.getLanguage()));
+            put.addColumn(columnFamily, Bytes.toBytes("article_authors"), Bytes.toBytes(article.getAuthors().toString()));
 
             put.addColumn(columnFamily, Bytes.toBytes("sentiment_ratio"), Bytes.toBytes(sentiment.getRatio()));
             put.addColumn(columnFamily, Bytes.toBytes("sentiment_score"), Bytes.toBytes(sentiment.getScore()));
             put.addColumn(columnFamily, Bytes.toBytes("sentiment_type"), Bytes.toBytes(sentiment.getType()));
+            put.addColumn(columnFamily, Bytes.toBytes("sentiment_keywords"), Bytes.toBytes(sentiment.getKeywords().toString()));
 
             return put;
         }

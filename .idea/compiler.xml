@@ -11,10 +11,16 @@
         <module name="common" />
         <module name="hot-topic-analysis-service" />
         <module name="news-collection-service" />
+        <module name="sentimental-news-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="analysis-tier" target="16" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="sentimental-news-api" options="-parameters" />
+    </option>
   </component>
 </project>
