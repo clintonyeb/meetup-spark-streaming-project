@@ -1,9 +1,14 @@
 # Most Sentimental News API
 
-#### Demo Video Link (on Microsoft Stream)
+#### Demo Video Link (on Microsoft Stream && Youtube)
 
-> Put link here
+Microsoft Stream (https://web.microsoftstream.com/video/443fa996-d46c-4d19-a166-d094a5dd0b02)
 
+Youtube Link (https://youtu.be/ZgsEqUEfFNk)
+
+
+
+#### Definitions
 
 >Definition of *sentimental*: marked or governed by feeling, sensibility, or emotional idealism                                                                      
 
