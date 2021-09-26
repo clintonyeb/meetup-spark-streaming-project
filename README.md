@@ -1,5 +1,8 @@
 # Most Sentimental News API
 
+#### Demo Video Link (on Microsoft Stream)
+
+> Put link here
 
 
 >Definition of *sentimental*: marked or governed by feeling, sensibility, or emotional idealism                                                                      
@@ -31,6 +34,36 @@ The architecture of the project is shown in the following diagram.
 4. Sentimental News API Service
 
    The Sentimental News API Service is a REST API service that responds to client requests to fetch various sentiments. It uses a cache to store time based sentiments so future requests are processed faster.
+
+5. Kafka
+
+   Apache Kafka is an open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications. Kafka provides High throughput, high scalability, permanent storage, and high availability. It also offers built-in stream processing system, connectors to almost all existing data sources, extensive client libraries, and a large ecosystem of Open Source Tools. It can be used in Mission Critical applications, is trusted by thousands of organizations, has vast user community, and rich online resources.
+
+Kafka combines three key capabilities so you can implement your use cases for event streaming end-to-end with a single battle-tested solution:
+
+    1. To publish (write) and subscribe to (read) streams of events, including continuous import/export of your data from other systems.
+    2. To store streams of events durably and reliably for as long as you want.
+    3. To process streams of events as they occur or retrospectively.
+
+And all this functionality is provided in a distributed, highly scalable, elastic, fault-tolerant, and secure manner. Kafka can be deployed on bare-metal hardware, virtual machines, and containers, and on-premises as well as in the cloud. You can choose between self-managing your Kafka environments and using fully managed services offered by a variety of vendors.
+
+Kafka is a distributed system consisting of servers and clients that communicate via a high-performance TCP network protocol. It can be deployed on bare-metal hardware, virtual machines, and containers in on-premise as well as cloud environments.
+
+Servers: Kafka is run as a cluster of one or more servers that can span multiple datacenters or cloud regions. Some of these servers form the storage layer, called the brokers. Other servers run Kafka Connect to continuously import and export data as event streams to integrate Kafka with your existing systems such as relational databases as well as other Kafka clusters. To let you implement mission-critical use cases, a Kafka cluster is highly scalable and fault-tolerant: if any of its servers fails, the other servers will take over their work to ensure continuous operations without any data loss.
+
+Clients: They allow you to write distributed applications and microservices that read, write, and process streams of events in parallel, at scale, and in a fault-tolerant manner even in the case of network problems or machine failures. Kafka ships with some such clients included, which are augmented by dozens of clients provided by the Kafka community: clients are available for Java and Scala including the higher-level Kafka Streams library, for Go, Python, C/C++, and many other programming languages as well as REST APIs.
+
+![Kafka Processing](streams-and-tables-p1_p4.png)
+
+Kafka APIs
+
+In addition to command line tooling for management and administration tasks, Kafka has five core APIs for Java and Scala:
+
+    * The Admin API to manage and inspect topics, brokers, and other Kafka objects.
+    * The Producer API to publish (write) a stream of events to one or more Kafka topics.
+    * The Consumer API to subscribe to (read) one or more topics and to process the stream of events produced to them.
+    * The Kafka Streams API to implement stream processing applications and microservices. It provides higher-level functions to process event streams, including transformations, stateful operations like aggregations and joins, windowing, processing based on event-time, and more. Input is read from one or more topics in order to generate output to one or more topics, effectively transforming the input streams to output streams.
+    * The Kafka Connect API to build and run reusable data import/export connectors that consume (read) or produce (write) streams of events from and to external systems and applications so they can integrate with Kafka. For example, a connector to a relational database like PostgreSQL might capture every change to a set of tables. However, in practice, you typically don't need to implement your own connectors because the Kafka community already provides hundreds of ready-to-use connectors.
 
 
 
@@ -64,13 +97,11 @@ This means you should have `cmake` and `Docker`, and `Docker Compose` installed.
 
    To stop all services including the background services, run the command: `make clean-all`.
 
+Sample Datasets:
 
+The application is built to handle live streaming data from the news api. However due to API rating limitations, sample data has been provided. Sample data for the news api is in `sample-news.json` file, and sample data for sentimental api is in `sample-sentiment.json` in the root directory of the project. When the `DEBUG` mode is set to true, the streaming pipeline uses data from the sample files.
 
-#### Demo Video Link (on Microsoft Stream)
-
-> Put link here
-
-
+Users looking to test the application in real life can get tokens and provide them as environment variables to the services.
 
 #### Acknowledgements:
 
@@ -87,4 +118,4 @@ This means you should have `cmake` and `Docker`, and `Docker Compose` installed.
 4. https://www.big-data-europe.eu/
 5. https://spark.apache.org/docs/latest/streaming-programming-guide.html
 6. https://github.com/DanielYWoo/fast-object-pool
-
+7. https://kafka.apache.org/intro
