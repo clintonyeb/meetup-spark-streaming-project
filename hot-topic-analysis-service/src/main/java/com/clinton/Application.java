@@ -61,17 +61,6 @@ public class Application {
                         LocationStrategies.PreferConsistent(),
                         ConsumerStrategies.Subscribe(topics, kafkaParams));
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                System.out.println("Shutdown started...");
-                HBaseConnectionPool.shutdown();
-                jsc.stop();
-                System.out.println("Shutdown finished");
-            } catch (final Exception ex) {
-                ex.printStackTrace();
-            }
-        }));
-
         inputDStream
                 .map(Record::parse)
                 .window(Durations.seconds(60), Durations.seconds(30))
@@ -93,6 +82,7 @@ public class Application {
 //        hbaseContext.streamBulkPut(newsDStream, TableName.valueOf(HBASE_TABLE_NAME), new PutFunction());
         scc.start();
         scc.awaitTermination();
+        jsc.stop();
     }
 
     private static Map<String, Object> kafkaConfiguration() {
@@ -101,8 +91,8 @@ public class Application {
         params.put("key.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         params.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         params.put("group.id", KAFKA_GROUP_ID);
-        params.put("auto.offset.reset", "earliest");
-        params.put("enable.auto.commit", true);
+        params.put("auto.offset.reset", "latest");
+        params.put("enable.auto.commit", false);
         params.put(ConsumerConfig.CLIENT_ID_CONFIG, KAFKA_CLIENT_ID);
         return params;
     }
