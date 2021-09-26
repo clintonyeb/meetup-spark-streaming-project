@@ -2,9 +2,9 @@
 
 #### Demo Video Link (on Microsoft Stream && Youtube)
 
-Microsoft Stream (https://web.microsoftstream.com/video/443fa996-d46c-4d19-a166-d094a5dd0b02)
+Microsoft Stream 'requires login' (https://web.microsoftstream.com/video/443fa996-d46c-4d19-a166-d094a5dd0b02)
 
-Youtube Link (https://youtu.be/ZgsEqUEfFNk)
+Youtube Link 'no login required'  (https://youtu.be/ZgsEqUEfFNk)
 
 
 
