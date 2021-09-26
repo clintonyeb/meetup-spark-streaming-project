@@ -7,7 +7,7 @@ start:
 	docker-compose up -d zoo1 kafka1 spark-master spark-worker-1 namenode datanode resourcemanager nodemanager1 historyserver hbase
 
 app:
-	docker-compose restart -d news-collection-service sentiment-analysis-service hot-topic-analysis-service sentimental-news-api
+	docker-compose up -d news-collection-service sentiment-analysis-service hot-topic-analysis-service sentimental-news-api
 	docker-compose logs -f
 
 clean:
