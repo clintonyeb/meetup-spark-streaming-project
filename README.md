@@ -104,9 +104,80 @@ This means you should have `cmake` and `Docker`, and `Docker Compose` installed.
 
 Sample Datasets:
 
-The application is built to handle live streaming data from the news api. However due to API rating limitations, sample data has been provided. Sample data for the news api is in `sample-news.json` file, and sample data for sentimental api is in `sample-sentiment.json` in the root directory of the project. When the `DEBUG` mode is set to true, the streaming pipeline uses data from the sample files.
+The application is built to handle live streaming data from the news api. However due to API rating limitations, sample data has been provided. Sample data for the news api is in `sample-news.json` file, and sample data for sentimental api is in `sample-sentiment.json` in the root directory of the project. When the `DEBUG` mode is set to true, the streaming pipeline uses data from the sample files. There is also a `sample-output.json` which has the expected data when you conenct to the REST endpoint.
 
 Users looking to test the application in real life can get tokens and provide them as environment variables to the services.
+
+
+Results:
+
+An example of getting data from the REST is:
+
+```shell
+curl 'app.news-api:8085'
+```
+
+and the expected sample results are:
+
+```json
+[
+  {
+    "id": "\"ImRlMzBkZmJjLTMyYTYtNDU0Ny1hMzc2LWFlZjRjOTZiMGIwZSI=\"",
+    "articleSentiment": {
+      "article": {
+        "authors": [
+          "Snopes"
+        ],
+        "title": "Indiana Jones Was Originally Indiana Smith",
+        "description": "Indiana Jones Was Originally Indiana Smith  Snopes.com",
+        "url": "https://www.snopes.com/articles/348039/indiana-jones-indiana-smith/",
+        "imageUrl": "https://www.snopes.com/tachyon/2021/06/indiana-jones-1.jpg",
+        "content": "Years before audiences were first introduced to Indiana Jones, the titular character of a movie franchise now going on its 40th year, the character was just an idea inside “Star Wars” director George Lucas’ head. In 1978, Lucas got together with his  ... [+3164 chars]",
+        "source": "snopes.com",
+        "pubDate": "2021-06-11T16:27:09+00:00",
+        "country": "us",
+        "language": "en"
+      },
+      "sentimentResponse": {
+        "keywords": [
+          {
+            "score": 0.192192596,
+            "word": "grip"
+          },
+          {
+            "score": 0.13424713,
+            "word": "day"
+          },
+          {
+            "score": 0.117922934,
+            "word": "street"
+          },
+          {
+            "score": -0.992633864,
+            "word": "worst"
+          },
+          {
+            "score": -0.815093905,
+            "word": "fear"
+          },
+          {
+            "score": -0.205555683,
+            "word": "wall"
+          },
+          {
+            "score": -0.126476981,
+            "word": "variant"
+          }
+        ],
+        "ratio": 0,
+        "score": -0.24219968185714288,
+        "type": "negative"
+      }
+    }
+  }
+]
+
+```
 
 #### Acknowledgements:
 
