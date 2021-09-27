@@ -114,7 +114,7 @@ Results:
 An example of getting data from the REST is:
 
 ```shell
-curl 'app.news-api:8085'
+$ curl 'app.news-api:8085'
 ```
 
 and the expected sample results are:
