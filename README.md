@@ -122,21 +122,21 @@ and the expected sample results are:
 ```json
 [
   {
-    "id": "\"ImRlMzBkZmJjLTMyYTYtNDU0Ny1hMzc2LWFlZjRjOTZiMGIwZSI=\"",
+    "id": "ImRlMzBkZmJjLTMyYTYtNDU0Ny1hMzc2LWFlZjRjOTZiMGIwZSI=",
     "articleSentiment": {
       "article": {
+        "url": "https://deadline.com/2021/07/covid-variant-stock-market-dow-jones-2021-media-tech-1234795814/",
+        "source": "deadline.com",
         "authors": [
-          "Snopes"
+          "Dade Hayes"
         ],
-        "title": "Indiana Jones Was Originally Indiana Smith",
-        "description": "Indiana Jones Was Originally Indiana Smith  Snopes.com",
-        "url": "https://www.snopes.com/articles/348039/indiana-jones-indiana-smith/",
-        "imageUrl": "https://www.snopes.com/tachyon/2021/06/indiana-jones-1.jpg",
-        "content": "Years before audiences were first introduced to Indiana Jones, the titular character of a movie franchise now going on its 40th year, the character was just an idea inside “Star Wars” director George Lucas’ head. In 1978, Lucas got together with his  ... [+3164 chars]",
-        "source": "snopes.com",
-        "pubDate": "2021-06-11T16:27:09+00:00",
+        "title": "Covid Variant Fear Grips Wall Street; Dow Jones Heads For Worst Day Of 2021; Media & Tech Slip But Avoid Major Damage",
+        "pubDate": "2021-07-19T17:59:00+00:00",
         "country": "us",
-        "language": "en"
+        "language": "en",
+        "description": "Covid Variant Fear Grips Wall Street; Dow Jones Heads For Worst Day Of 2021; Media & Tech Slip But Avoid Major Damage  Deadline",
+        "imageUrl": "https://deadline.com/wp-content/uploads/2021/07/stock-market-drop.jpg?w=1024",
+        "content": "The stock market is rife with investor fears about Covid-19 wreaking fresh havoc on the economy.\n\nThe Dow Jones Industrial Average was down about 900 points with about two hours left in the trading day, slipping below 34,000. At its lowest point, the ... [+1843 chars]"
       },
       "sentimentResponse": {
         "keywords": [
